@@ -30,6 +30,7 @@ class TestFunctions(unittest.TestCase):
         # semicolon separates rows; spaces (or commas) delimit entries
         # within a row.
         A = np.matrix("1.0 2.0; 3.0 4.0")
+        #print("A:",A)
 
         def f(x):
             # The * operator for numpy matrices is overloaded to mean

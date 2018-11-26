@@ -24,14 +24,16 @@ def approximateJacobian(f, x, dx=1e-6):
     length N, then Df_x is an NxN numpy matrix.
 
     """
+    # evaluate f at x (could be scalar or array)
     fx = f(x)
 
+    # if f is scalar 1D, simply take the derivative of f
     if np.isscalar(x):
-        return f(x + dx) - fx / dx
+        return (f(x + dx) - fx) / dx
 
-    # Let's leverage these facts to initialize Df_x to be an NxN numpy
     N = x.size
     Df_x = np.matrix(np.zeros((N,N)))
+#    print("Df_x:",Df_x)
 
     # h is same shape as x
     h = np.zeros_like(x)
@@ -39,7 +41,7 @@ def approximateJacobian(f, x, dx=1e-6):
     for i in range(x.size): # Could also have said range(x.size)
         h[i] = dx
         # Replace ith col of Df_x with difference quotient
-        Df_x[:,i] = f(x + h) - fx / dx
+        Df_x[:,i] = (f(x + h) - fx) / dx
         # Reset h[i] to 0
         h[i] = 0
 
@@ -77,6 +79,7 @@ class Polynomial(object):
         # Iterate from highest to lowest degree
         for c in reversed(self._coeffs):
             ans = x*ans + c
+            print ("ans:",ans)
         return ans
 
     # Instances of classes that have a defined __call__ method are

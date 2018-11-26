@@ -13,7 +13,7 @@ class Newton(object):
 
     """
     
-    def __init__(self, f, tol=1.e-6, maxiter=20, dx=1.e-6):
+    def __init__(self, f, tol=1.e-6, maxiter=20, dx=1.e-6,Df=None,r=None):
         """Parameters:
         
         f: the function whose roots we seek. Can be scalar- or
@@ -45,20 +45,25 @@ class Newton(object):
         for i in range(self._maxiter):
             fx = self._f(x)
             # linalg.norm works fine on scalar inputs
-            if np.linalg.norm(fx) < self._tol:
+            if np.linalg.norm(fx) < self._tol: # when f(x) magnitude is approx. 0, exit iteration loop
                 return x
-            x = self.step(x, fx)
+            x = self.step(x, fx) # take a step, given x and f(x)
 
-        return x
+            # Bound the root: allow user to specify a radius r around initial guess x0
+            # raises exception if x0 is far away from x
+
+        return x # return the x value that results in f(x)=0
 
     def step(self, x, fx=None):
         """Take a single step of a Newton method, starting from x. If the
         argument fx is provided, assumes fx = f(x).
 
         """
-        if fx is None:
+        # fx can be given, or not
+        if fx is None: # if fx not given, then fx just evaluated at x
             fx = self._f(x)
 
+        # find the derivative of f at x
         Df_x = F.approximateJacobian(self._f, x, self._dx)
         # linalg.solve(A,B) returns the matrix solution to AX = B, so
         # it gives (A^{-1}) B. np.matrix() promotes scalars to 1x1
