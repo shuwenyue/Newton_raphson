@@ -54,17 +54,16 @@ class Newton(object):
 
             # iterate another step
             x = self.step(x, fx)
+            #print ("iter:",i,"x:",x)
 
             # Bound the root: allow user to specify a radius max_radius around initial guess x0
             # returns 0 (with error message) if computed root is far away from x0
-            if np.linalg.norm(x-x0) > self._max_radius: #pick a suitable  max_radius, default = 10
-                print("computed root is above maximum radius threshold")
-                return 0
+            if np.linalg.norm(x-x0) > self._max_radius:
+                raise Exception("ERROR: computed root is above maximum radius threshold")
 
-        # Error if not converged after max interations
-        if np.linalg.norm(fx) > self._tol:
-            print( "Did not converge in maximum number of iterations. Change initial guess or increase number of iterations or tolerance")
-            return 0
+        # Error if not converged after max interations (unless max iteration is 1 step)
+        if np.linalg.norm(fx) > self._tol and self._maxiter != 1:
+            raise Exception( "ERROR: Did not converge in maximum number of iterations. Change initial guess or increase number of iterations or tolerance")
 
         return x
 
@@ -73,11 +72,14 @@ class Newton(object):
         argument fx is provided, assumes fx = f(x).
 
         """
-        Df_x = F.approximateJacobian(self._f, x, self._dx)
 
         # Determine if analytic form or approximate form of Jacobian is to be used
         if fx is None:
             fx = self._f(x)
+        if self._Df==0: # if Df is not supplied,then approximate Jacobian calculated
+            Df_x = F.approximateJacobian(self._f, x, self._dx)
+        else: # Df is supplied, then analytic Jacobian is calculated
+            Df_x = F.AnalyticJacobian(self._Df,x)
 
         # Df_x^-1 f(x) is solved
         h = np.linalg.solve(np.matrix(Df_x), np.matrix(fx))
