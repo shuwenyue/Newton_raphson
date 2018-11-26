@@ -53,8 +53,11 @@ class Newton(object):
                 return x
 
             # iterate another step
-            x = self.step(x, fx)
-            #print ("iter:",i,"x:",x)
+            try:
+                x = self.step(x, fx)
+                #print ("iter:",i,"x:",x)
+            except (np.linalg.LinAlgError):  # if x is at the 0 slope of function, raise error
+                raise Exception ("Error: Slope is 0 at this x, try a different initial guess x0")
 
             # Bound the root: allow user to specify a radius max_radius around initial guess x0
             # returns 0 (with error message) if computed root is far away from x0

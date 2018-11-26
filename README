@@ -1,0 +1,98 @@
+----------------------------------------------------------------------------------------- 
+                            NEWTON-RAPHSON ROOT FINDER
+-----------------------------------------------------------------------------------------
+APC 524 HW3 | SHUWEN YUE | README
+
+newton.py:  implements the solver as a class called Newton with a solve()
+            method for finding a root of a function given an initial guess
+
+    inputs: 
+        f (function)
+        tol (tolerance)
+        maxiter (max interations)
+        x0 (initial guess of root)
+        dx (step size)
+        Df (analytic jacobian, optional)
+        max_radius (max radius accepted for distance between x0 and ext step, optional)
+
+    outputs:
+        x (solution for the root of the function, can be scalar or array depending
+        on the form of the input f and x0)
+
+-----------------------------------------------------------------------------------------
+functions.py: contains a class (subclass of unittest.TestCase) whose
+              methods can test the class in newton.py 
+
+    inputs:
+        f (function)
+        x (next guess of x)
+        dx (step size)
+        Df (jacobian, optional)
+
+    output:
+        Df_x (evaluated jacobian at given x)
+
+    The Polynomial class is also included in this file to allow for easy access to
+    create polynomials for testing
+
+-----------------------------------------------------------------------------------------
+testFunctions.py - unittests for Functions.py
+
+test_ApproxJacobian1D: test to calculate and evalulate jacobian of 1D function using 
+                       approximate method (no jacobian provided)
+
+test_ApproxJacobian2D: test to calculate and evalulate jacobian of 2D function using 
+                       approximate method (no jacobian provided)
+
+test_Polynomial: test to generate polynomial and evalulate over a range of x using
+                  Polynomial class
+
+test_ApproxJacobianPolynomial: test to calculate and evaluate jacobian of 1D function
+                               using Polynomial as input
+
+test_Analytic1D: test to evaluate jacobian of 1D function given analytic Jacobian
+                 input 
+
+test_Analytic2D: test to evaluate jacobian of 2D function given analytic Jacobian
+                 input 
+
+
+-----------------------------------------------------------------------------------------
+testFunctions.py - unittests for Functions.py
+
+test_NewtonStep: test to calculate calculate 1 step using Newton-Raphson method,
+                 expected x is tested, and distance to predicted root decreases.
+                 This test serves to ensure a single step does what is expected.
+
+test_Linear: tests solver for a simple linear function
+
+test_NonLinear: tests solver for a nonlinear function
+
+test_BoundtheRoot: tests solver for when the radius between x and x0 exceeds a given
+                   max_radius.  An exception is raised in this case.
+
+test_MaxIterations: tests response if solution is not converged after maximum number
+                    of iterations. An exception is raised in this case.
+
+test_Analytic_1d: tests solver of 1D function when analytic jacobian is provided
+
+test_Analytic_2d: tests solver of 2D function when analytic jacobian is provided
+
+test_approximate_1d: tests solver of 1D function when analytic jacobian is not provided,
+                     approximate method is used
+
+test_approximate_2d: tests solver of 2D function when analytic jacobian is not provided,
+                     approximate method is used
+
+test_quadratic: tests solver in the case of a quadratic function with a single root 
+                (minimum of function sits on the x axis)
+
+test_SlopeZero: tests solver in the case a guess x is at a location on function where
+                the slope is 0.  An exception is raised in this case
+
+                     
+                
+
+
+
+

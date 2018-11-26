@@ -9,7 +9,7 @@ import math
 class TestNewton(unittest.TestCase):
 
     # check single Newton step
-    def testNewtonStep(self):
+    def test_NewtonStep(self):
         f = F.Polynomial([9,6,1])
         solver = newton.Newton(f, tol=1.e-10, maxiter=1)
         x0 = 0
@@ -19,7 +19,7 @@ class TestNewton(unittest.TestCase):
         self.assertTrue(abs(trueroot-x)<abs(trueroot-x0))
 
     # find root of simple linear function
-    def testLinear(self):
+    def test_Linear(self):
         f = lambda x : 3.0*x + 6.0
         solver = newton.Newton(f, tol=1.e-15, maxiter=2)
         x0 = -2.0
@@ -27,7 +27,7 @@ class TestNewton(unittest.TestCase):
         self.assertEqual(x, -2.0)
 
     # find root of nonlinear function
-    def testNonLinear(self):
+    def test_NonLinear(self):
         f = lambda x : x*x-1
         solver = newton.Newton(f, tol=1.e-15, maxiter=30)
         x0 = 0.5
@@ -35,14 +35,14 @@ class TestNewton(unittest.TestCase):
         self.assertEqual(x, 1.0)
 
     # check 'bound the root' error if x step is > max_radius
-    def testBoundtheRoot(self):
+    def test_BoundtheRoot(self):
         f = lambda x: 3.0*x + 6.0
         solver = newton.Newton(f, tol=1.e-15, maxiter=2,max_radius=2)
         x0 = 100
         self.assertRaises(Exception,solver.solve,x0)
 
     # check max iterations error
-    def testMaxIterations(self):
+    def test_MaxIterations(self):
         f = F.Polynomial([1,0,1]) # function with no root, never converges
         solver = newton.Newton(f, tol=1.e-15, maxiter=100,max_radius=100)
         x0 = 2
@@ -65,16 +65,36 @@ class TestNewton(unittest.TestCase):
         x = solver.solve(x0)
         np.testing.assert_array_almost_equal(x, np.matrix([[3], [2]]))
 
-    # check solver with 2D analytic jacobian
-    def test_analytic_2d(self):
+    # check solver with 1D with NO analytic jacobian
+    def test_approximate_1d(self):
+        f= F.Polynomial([12,-7,1])
+        solver = newton.Newton(f, tol=1.e-15)
+        x = solver.solve(3.6)
+        self.assertAlmostEqual(x, 4.0)
+
+    # check solver with 2D NO analytic jacobian
+    def test_approximate_2d(self):
         f= lambda x: np.matrix([[2*x[0,0]-2*x[1,0]-2],[ x[0,0]+2*x[1,0]-7]])
-        Df= lambda x: np.matrix([[2, -2],[1, 2]])
-        solver = newton.Newton(f, tol=1.e-10, Df=Df)
+        solver = newton.Newton(f, tol=1.e-10 )
         x0=np.matrix([[1.],[1.]])
         x = solver.solve(x0)
         np.testing.assert_array_almost_equal(x, np.matrix([[3], [2]]))
 
-    
+    # find root of quadratic function with a single root
+    def test_Quadratic(self):
+        f= F.Polynomial([9,6,1])
+        Df=F.Polynomial([6,2])
+        solver = newton.Newton(f, tol=1.e-15, Df=Df, maxiter=50)
+        x = solver.solve(-3)
+        self.assertAlmostEqual(x, -3.0)
+
+    # raise error if guess is at slope 0 of function
+    def test_SlopeZero(self):
+        f= F.Polynomial([12,-7,1])
+        Df=F.Polynomial([-7,2])
+        solver = newton.Newton(f, tol=1.e-10, Df=Df, maxiter=50)
+        x0=3.5
+        self.assertRaises(Exception,solver.solve,x0)
 
 if __name__ == "__main__":
     unittest.main()
