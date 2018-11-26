@@ -47,13 +47,24 @@ class TestFunctions(unittest.TestCase):
         Df_x = F.approximateJacobian(p, x0,dx)
         self.assertAlmostEqual(Df_x,5.0)
 
-    # test analytic jacobial function
-    def testAnalytic(self):
+    # calculate analytical jacobian using  function
+    def testAnalytic1D(self):
+        # p(x) = x^2 + 5x + 4
+        p = F.Polynomial([4, 5, 1])
         # Df= 2x + 5
         Df = F.Polynomial([5, 2])
         x0 = -1
         Df_x = F.AnalyticJacobian(Df, x0)
         np.testing.assert_array_almost_equal(Df_x,3)
+
+    # calculate analytical jacobian using 2D function
+    def testAnalytic2D(self):
+        def Df(x):
+            return np.matrix([ [2*x[1,0]+x[0,0]] ,[4*x[0,0]+4] ])
+        x0 = np.matrix([[1], [-1]])
+        Df_x = F.AnalyticJacobian(Df,x0)
+        np.testing.assert_array_almost_equal(Df_x, np.matrix([[-1],[8]]))
+
 
 if __name__ == '__main__':
     unittest.main()
