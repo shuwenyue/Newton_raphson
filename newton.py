@@ -1,4 +1,4 @@
-'''newton.py
+ '''newton.py
 
 Implementation of a Newton-Raphson root-finder.
 
